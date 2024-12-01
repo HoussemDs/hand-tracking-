@@ -4,7 +4,7 @@ import time
 # this is a project for uni
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
-
+# updated
 cap = cv2.VideoCapture(0)
 
 box_top_left = (50, 100)
