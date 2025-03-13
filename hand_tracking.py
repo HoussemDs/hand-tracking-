@@ -47,11 +47,26 @@ with mp_hands.Hands(
                     if (box_top_left[0] < cx < box_bottom_right[0]) and (box_top_left[1] < cy < box_bottom_right[1]):
                         color = (255, 0, 0)  # Blue for inside the box
                         hand_in_box = True
+                        status = "Inside Box"
                     else:
                         color = (0, 0, 255)  # Red for outside the box
+                        status = "Outside Box"
 
                     cv2.circle(image, (cx, cy), 5, color, cv2.FILLED)
-                    print(f'Hand landmark {idx}: ({cx}, {cy})')
+                    # Display coordinates for all landmarks
+                    text = f"Landmark {idx}: ({cx},{cy}) {status}"
+                    cv2.putText(image, text, (cx, cy + 20), 
+                              cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+                    # Display coordinates for thumb and index finger
+                    if idx in [4, 8]:  # Thumb and index finger
+                        text = f"Finger {idx}: ({cx},{cy}) {status}"
+                        cv2.putText(image, text, (10, 30 if idx == 4 else 60), 
+                                  cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
+                    # Only print landmark positions every 30 frames to reduce output
+                    if idx in [4, 8, 12, 16, 20] and cv2.getTickCount() % 30 == 0:  # Only thumb, index, middle, ring and pinky tips
+                        print(f'Finger tip {idx}: ({cx}, {cy}) - {"Inside" if hand_in_box else "Outside"} box')
+                    else:
+                        pass
 
                 mp_drawing.draw_landmarks(
                     image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
